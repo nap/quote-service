@@ -77,11 +77,11 @@ def send_quote(client, message):
         if len(JSONP_FUNC_NAME) > 0:
             quote = "%s(%s);" % (JSONP_FUNC_NAME, quote)
             
-        if not client.closed:
+        if client.closed:
             client.write(_ok_request % (len(quote), quote), callback=client.close)
 
     else:
-        if not client.closed:
+        if client.closed:
             client.write(_bad_request, callback=client.close)
 
 

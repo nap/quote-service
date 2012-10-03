@@ -76,6 +76,7 @@ if __name__ == '__main__':
         if len(sys.argv) > 1:
             try:
                 with open(sys.argv[1]) as json_file: pass
+                INPUT = sys.argv[1]
                 DEFAULT_PORT = int(sys.argv[2])
                 MAXIMUM_CONNEXIONS = int(sys.argv[3])
 

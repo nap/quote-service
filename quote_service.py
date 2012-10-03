@@ -65,7 +65,7 @@ def send_quote(client, message):
         client.write(_bad_request, callback=client.close)
 
 
-quotes = ''
+
 if __name__ == '__main__':
     if '-h' in sys.argv:
         print 'Usage: python quote_service.py [quote_file] [port] [max_connections]'
@@ -88,11 +88,10 @@ if __name__ == '__main__':
 
         with codecs.open(INPUT, 'r', 'utf-8') as json_file:
             quotes = json.loads(''.join(json_file.readlines()))
-            io_loop = ioloop.IOLoop.instance()
 
             sok = get_socket(DEFAULT_HOST, DEFAULT_PORT, MAXIMUM_CONNEXIONS)
-
             callback = functools.partial(connection_ready, sok)
+            io_loop = ioloop.IOLoop.instance()
             io_loop.add_handler(sok.fileno(), callback, io_loop.READ)
 
             # Launch the io loop.

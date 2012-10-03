@@ -34,6 +34,7 @@ def get_socket(host, port, max_connections):
     sock.listen(int(max_connections))
     return sock
 
+
 def connection_ready(sok, fd, events):
     # Set the file descriptor of the current socket as non-blocking to avoid EAGAIN error.
     flags = fcntl.fcntl(fd, fcntl.F_GETFL)
@@ -63,7 +64,6 @@ def send_quote(client, message):
 
     else:
         client.write(_bad_request, callback=client.close)
-
 
 
 if __name__ == '__main__':

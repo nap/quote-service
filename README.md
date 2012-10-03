@@ -25,14 +25,19 @@ Start
 =====
 ```bash
 unary$ python quote_service.py -h
-Usage: python quote_service.py [quote_file] [port] [max_connections]
+Usage: python quote_service.py [quote_file] [port] [max_connections] [PADDING]
 Default: python quote_service.py quote.json 8080 5000
 Valid JSON (ex: filename.json) format: [{"key","value"}]
 
-unary$ python quote_service.py quote.json 8080 5000
+unary$ python quote_service.py quote.json 8080 5000 jsonp_func
 Starting ... 
 Serving 17039 quotes on port 8080.
 Press Ctrl + C to quit. 
+```
+
+Output after HTTP GET will be:
+```json
+jsonp_func({"body": "<...omitted...>", "author": "Anonyme", "country": "Portugal", "iso": "pt", "date": "", "id": 3306});
 ```
 
 License Terms

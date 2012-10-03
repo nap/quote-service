@@ -36,7 +36,7 @@ Press Ctrl + C to quit.
 ```
 
 Output after HTTP GET will be:
-```json
+```javascript
 jsonp_func({"body": "<...omitted...>", "author": "Anonyme", "country": "Portugal", "iso": "pt", "date": "", "id": 3306});
 ```
 

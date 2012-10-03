@@ -23,7 +23,7 @@ _bad_request = "HTTP/1.1 501 Not Implemented\r\n" \
 # Response to all GET request with a 200 OK status code
 _ok_request = "HTTP/1.1 200 Connection established\r\n" \
               "Connection: keep-alive\r\n" \
-              "Content-Length: %s bytes\r\n" \
+              "Content-Length: %s\r\n" \
               "Content-Type: application/json; charset=utf-8\r\n" \
               "Server: quote-service/0.1.1\r\n\r\n%s\r\n\r\n"
 

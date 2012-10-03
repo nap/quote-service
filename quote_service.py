@@ -1,6 +1,5 @@
 __author__ = 'Jean-Bernard Ratte - jean.bernard.ratte@unary.ca'
 
-import codecs
 import json
 import functools
 import socket
@@ -15,6 +14,7 @@ INPUT = 'quote.json'
 DEFAULT_PORT = 8080
 DEFAULT_HOST = ''
 MAXIMUM_CONNEXIONS = 5000
+JSONP_FUNC_NAME = ''
 
 # Response to all HTTP request with 501 status code except get GET 
 _bad_request = "HTTP/1.1 501 Not Implemented\r\n" \
@@ -73,6 +73,9 @@ def send_quote(client, message):
     """
     if message[:14] == 'GET / HTTP/1.1':
         quote = json.dumps(quotes[randint(1, len(quotes))])
+        if len(JSONP_FUNC_NAME) > 0:
+            quote = "%s(%s);" % (JSONP_FUNC_NAME, quote)
+
         client.write(_ok_request % (len(quote), quote), callback=client.close)
 
     else:
@@ -81,17 +84,18 @@ def send_quote(client, message):
 
 if __name__ == '__main__':
     if '-h' in sys.argv:
-        print 'Usage: python quote_service.py [quote_file] [port] [max_connections]'
+        print 'Usage: python quote_service.py [quote_file] [port] [max_connections] [PADDING]'
         print 'Default: python quote_service.py %s %s %s' % (INPUT, DEFAULT_PORT, MAXIMUM_CONNEXIONS)
         print 'Valid JSON (ex: filename.json) format: [{"key","value"}]'
 
     else:
         if len(sys.argv) > 1:
             try:
-                with open(sys.argv[1]) as json_file: pass
+                with open(sys.argv[1]) as f: f.close()
                 INPUT = sys.argv[1]
                 DEFAULT_PORT = int(sys.argv[2])
                 MAXIMUM_CONNEXIONS = int(sys.argv[3])
+                JSONP_FUNC_NAME = str(sys.argv[4]).replace(' ', '').strip()
 
             except IOError:
                 raise IOError('Invalid JSON file.')
@@ -99,14 +103,15 @@ if __name__ == '__main__':
             except ValueError:
                 raise ValueError('Invalid Port number or Maximum Connection number error.')
 
-        with codecs.open(INPUT, 'r', 'utf-8') as json_file:
+        with open(INPUT, 'r') as json_file:
             # Load all the quotes in memory
             quotes = json.loads(''.join(json_file.readlines()))
+            json_file.close()
 
             sok = get_socket(DEFAULT_HOST, DEFAULT_PORT, MAXIMUM_CONNEXIONS)
             callback = functools.partial(connection_ready, sok)
+
             io_loop = ioloop.IOLoop.instance()
-            
             # Get socket and wait for connections
             io_loop.add_handler(sok.fileno(), callback, io_loop.READ)
 
@@ -120,6 +125,3 @@ if __name__ == '__main__':
             except KeyboardInterrupt:
                 io_loop.stop()
                 print "\r\n/!\ Quote service exited cleanly."
-
-            except (IOError, ValueError) as e:
-                print e.message

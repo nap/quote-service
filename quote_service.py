@@ -18,13 +18,16 @@ MAXIMUM_CONNEXIONS = 5000
 JSONP_FUNC_NAME = ''
 
 # Response to all HTTP request with 501 status code except get GET 
-_bad_request = "HTTP/1.1 501 Not Implemented\r\n" \
+_bad_request = "HTTP/1.1 405 Method Not Allowed\r\n" \
+               "Connection: close\r\n"\
+               "Allow: GET\r\n"\
                "Server: quote-service/0.1.1\r\n\r\n"
 
 # Response to all GET request with a 200 OK status code
-_ok_request = "HTTP/1.1 200 Connection established\r\n" \
-              "Connection: keep-alive\r\n" \
-              "Content-Length: %s\r\n" \
+_ok_request = "HTTP/1.1 200 OK\r\n" \
+              "Connection: close\r\n" \
+              "Content-Length: %s\r\n"\
+              "Content-Language: fr"\
               "Content-Type: application/json; charset=utf-8\r\n" \
               "Server: quote-service/0.1.1\r\n\r\n%s\r\n\r\n"
 
@@ -76,12 +79,12 @@ def send_quote(client, message):
         quote = json.dumps(quotes[randint(1, len(quotes))])
         if len(JSONP_FUNC_NAME) > 0:
             quote = "%s(%s);" % (JSONP_FUNC_NAME, quote)
-            
-        if client.closed:
+
+        if not client.closed():
             client.write(_ok_request % (len(quote), quote), callback=client.close)
 
     else:
-        if client.closed:
+        if not client.closed():
             client.write(_bad_request, callback=client.close)
 
 
@@ -96,9 +99,13 @@ if __name__ == '__main__':
             try:
                 with open(sys.argv[1]) as f: f.close()
                 INPUT = sys.argv[1]
-                DEFAULT_PORT = int(sys.argv[2])
-                MAXIMUM_CONNEXIONS = int(sys.argv[3])
-                JSONP_FUNC_NAME = str(sys.argv[4]).replace(' ', '').strip()
+                
+                if len(sys.argv) > 2:
+                    DEFAULT_PORT = int(sys.argv[2])
+                    MAXIMUM_CONNEXIONS = int(sys.argv[3])
+                    
+                if len(sys.argv) > 4:
+                    JSONP_FUNC_NAME = str(sys.argv[4]).replace(' ', '').strip()
 
             except IOError:
                 raise IOError('Invalid JSON file.')

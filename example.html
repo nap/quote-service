@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Quote-Service Example.</title>
+		<script type="text/javascript" charset="utf-8">
+		function quote(json) {
+			document.getElementById('body').innerHTML = json.body;
+			document.getElementById('author').innerHTML = json.author;
+			document.getElementById('date').innerHTML = json.date;
+		}
+		</script>
+		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+	</head>
+	<body>
+		<div style="padding: 40px;">
+			<blockquote id="quote">
+				<p id="body"></p>
+				<small><cite id="author"></cite> <span id="date"></span></small>
+			</blockquote>
+		</div>
+		<script type="text/javascript" charset="utf-8" src="http://YOUR_ADDRESS:PORT_NUMBER"></script>
+	</body>
+</html>

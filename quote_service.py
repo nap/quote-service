@@ -27,7 +27,7 @@ _bad_request = "HTTP/1.1 405 Method Not Allowed\r\n" \
 _ok_request = "HTTP/1.1 200 OK\r\n" \
               "Connection: close\r\n" \
               "Content-Length: %s\r\n"\
-              "Content-Language: fr"\
+              "Content-Language: fr\r\n"\
               "Content-Type: application/json; charset=utf-8\r\n" \
               "Server: quote-service/0.1.1\r\n\r\n%s\r\n\r\n"
 

@@ -10,7 +10,8 @@ from os import O_NONBLOCK
 from tornado import ioloop, iostream, stack_context
 from random import randint
 
-GET_MSG = 'GET / HTTP/1.1'
+END_POINT = "/"
+GET_MSG = 'GET %s HTTP/1.1' % END_POINT
 INPUT = 'quote.json'
 DEFAULT_PORT = 8080
 DEFAULT_HOST = ''
@@ -76,7 +77,7 @@ def send_quote(client, message):
     to finally close the connection when the quote is fully sent.
     """
     if message[:len(GET_MSG)] == GET_MSG:
-        quote = json.dumps(quotes[randint(1, len(quotes))])
+        quote = json.dumps(quotes[randint(0, len(quotes) - 1)])
         if len(JSONP_FUNC_NAME) > 0:
             quote = "%s(%s);" % (JSONP_FUNC_NAME, quote)
 

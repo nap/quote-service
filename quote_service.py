@@ -92,7 +92,7 @@ if __name__ == '__main__':
     if '-h' in sys.argv:
         print 'Usage: python quote_service.py [quote_file] [port] [max_connections] [PADDING]'
         print 'Default: python quote_service.py %s %s %s' % (INPUT, DEFAULT_PORT, MAXIMUM_CONNEXIONS)
-        print 'Valid JSON (ex: filename.json) format: [{"key","value"}]'
+        print 'Valid JSON (ex: filename.json) format: [{"key": "value"}, {"key": "value"}]'
 
     else:
         if len(sys.argv) > 1:

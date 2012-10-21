@@ -27,7 +27,7 @@ Start
 unary$ python quote_service.py -h
 Usage: python quote_service.py [quote_file] [port] [max_connections] [PADDING]
 Default: python quote_service.py quote.json 8080 5000
-Valid JSON (ex: filename.json) format: [{"key","value"}]
+Valid JSON (ex: filename.json) format: [{"key":"value"},{"key":"value"}]
 
 unary$ python quote_service.py quote.json 8080 5000 jsonp_func
 Starting ... 

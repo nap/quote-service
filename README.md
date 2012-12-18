@@ -25,11 +25,17 @@ Start
 =====
 ```bash
 unary$ python quote_service.py -h
-Usage: python quote_service.py [quote_file] [port] [max_connections] [PADDING]
-Default: python quote_service.py quote.json 8080 5000
-Valid JSON (ex: filename.json) format: [{"key":"value"},{"key":"value"}]
+usage: quote_service.py [-h] -f QUOTE_FILE [-p PORT] [-m MAX_CONNECTIONS]
+                        [--padding PADDING]
 
-unary$ python quote_service.py quote.json 8080 5000 jsonp_func
+optional arguments:
+  -h, --help          show this help message and exit
+  -f QUOTE_FILE       format: [{"key": "value"}, {"key": "value"}]
+  -p PORT             port number to accept connection to (Default: 8080)
+  -m MAX_CONNECTIONS  number of maximum connection allowed (Default: 5000)
+  --padding PADDING   JSONP function name
+
+unary$ python quote_service.py -f quote.json
 Starting ... 
 Serving 17039 quotes on port 8080.
 Press Ctrl + C to quit. 

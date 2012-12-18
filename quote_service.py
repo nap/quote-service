@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
         # Launch the io loop.
         try:
-            print "Starting ... "
+            print "Started ... "
             print "Serving %s quotes on port %s." % (len(quotes), args.port)
             print "Press Ctrl + C to quit. "
             io_loop.start()

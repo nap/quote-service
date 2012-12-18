@@ -6,6 +6,7 @@ import socket
 import fcntl
 import errno
 import sys
+import argparse
 from os import O_NONBLOCK
 from tornado import ioloop, iostream, stack_context
 from random import randint
@@ -90,49 +91,60 @@ def send_quote(client, message):
 
 
 if __name__ == '__main__':
-    if '-h' in sys.argv:
-        print 'Usage: python quote_service.py [quote_file] [port] [max_connections] [PADDING]'
-        print 'Default: python quote_service.py %s %s %s' % (INPUT, DEFAULT_PORT, MAXIMUM_CONNEXIONS)
-        print 'Valid JSON (ex: filename.json) format: [{"key": "value"}, {"key": "value"}]'
+    parser = argparse.ArgumentParser()
+    file_arg = {
+        'dest': 'quote_file',
+        'type': argparse.FileType('r'),
+        'required': True,
+        'help': 'format: [{"key": "value"}, {"key": "value"}]'
+    }
+    parser.add_argument('-f', **file_arg)
 
-    else:
-        if len(sys.argv) > 1:
-            try:
-                with open(sys.argv[1]) as f: f.close()
-                INPUT = sys.argv[1]
-                
-                if len(sys.argv) > 2:
-                    DEFAULT_PORT = int(sys.argv[2])
-                    MAXIMUM_CONNEXIONS = int(sys.argv[3])
-                    
-                if len(sys.argv) > 4:
-                    JSONP_FUNC_NAME = str(sys.argv[4]).replace(' ', '').strip()
+    port_arg = {
+        'dest': 'port',
+        'type': int,
+        'default': DEFAULT_PORT,
+        'required': False,
+        'help': 'port number to accept connection to (Default: %s)' % DEFAULT_PORT
+    }
+    parser.add_argument('-p', **port_arg)
 
-            except IOError:
-                raise IOError('Invalid JSON file.')
+    max_arg = {
+        'dest': 'max_connections',
+        'type': int,
+        'default': MAXIMUM_CONNEXIONS,
+        'required': False,
+        'help': 'number of maximum connection allowed (Default: %s)' % MAXIMUM_CONNEXIONS
+    }
+    parser.add_argument('-m', **max_arg)
 
-            except ValueError:
-                raise ValueError('Invalid Port number or Maximum Connection number error.')
+    padding_arg = {
+        'dest': 'padding',
+        'type': str,
+        'required': False,
+        'help': 'JSONP function name'
+    }
+    parser.add_argument('--padding', **padding_arg)
+    args = parser.parse_args()
 
-        with open(INPUT, 'r') as json_file:
-            # Load all the quotes in memory
-            quotes = json.loads(''.join(json_file.readlines()))
-            json_file.close()
+    with args.quote_file as json_file:
+        # Load all the quotes in memory
+        quotes = json.loads(''.join(json_file.readlines()))
 
-            sok = get_socket(DEFAULT_HOST, DEFAULT_PORT, MAXIMUM_CONNEXIONS)
-            callback = functools.partial(connection_ready, sok)
+        sok = get_socket(DEFAULT_HOST, args.port, args.max_connections)
+        callback = functools.partial(connection_ready, sok)
 
-            io_loop = ioloop.IOLoop.instance()
-            # Get socket and wait for connections
-            io_loop.add_handler(sok.fileno(), callback, io_loop.READ)
+        io_loop = ioloop.IOLoop.instance()
+        # Get socket and wait for connections
+        io_loop.add_handler(sok.fileno(), callback, io_loop.READ)
 
-            # Launch the io loop.
-            try:
-                print "Starting ... "
-                print "Serving %s quotes on port %s." % (len(quotes), DEFAULT_PORT)
-                print "Press Ctrl + C to quit. "
-                io_loop.start()
+        # Launch the io loop.
+        try:
+            print "Starting ... "
+            print "Serving %s quotes on port %s." % (len(quotes), args.port)
+            print "Press Ctrl + C to quit. "
+            io_loop.start()
 
-            except KeyboardInterrupt:
-                io_loop.stop()
-                print "\r\n/!\ Quote service exited cleanly."
+        except KeyboardInterrupt:
+            io_loop.stop()
+            print "\r\n/!\ Quote service has exited cleanly"

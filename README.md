@@ -23,7 +23,7 @@ Dependency
 
 Start
 =====
-```bash
+```
 unary$ python quote_service.py -h
 usage: quote_service.py [-h] -f QUOTE_FILE [-p PORT] [-m MAX_CONNECTIONS]
                         [--padding PADDING]

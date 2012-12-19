@@ -17,7 +17,6 @@ INPUT = 'quote.json'
 DEFAULT_PORT = 8080
 DEFAULT_HOST = ''
 MAXIMUM_CONNEXIONS = 5000
-JSONP_FUNC_NAME = ''
 
 # Response to all HTTP request with 501 status code except get GET 
 _bad_request = "HTTP/1.1 405 Method Not Allowed\r\n" \
@@ -46,7 +45,7 @@ def get_socket(host, port, max_connections):
     return sock
 
 
-def connection_ready(sok, fd, events):
+def connection_ready(sok, fd, events, padding=None):
     """
     On a read event, we accept the connection and wrap it in a IOStream 
     and make sure that the socket is non-blocking.
@@ -68,19 +67,19 @@ def connection_ready(sok, fd, events):
 
     # Wrap client socket into an IOStream
     client = iostream.IOStream(connection)
-    callback = stack_context.wrap(functools.partial(send_quote, client))
+    callback = stack_context.wrap(functools.partial(send_quote, client, padding=padding))
     client.read_until("\r\n\r\n", callback)
 
 
-def send_quote(client, message):
+def send_quote(client, message, padding=None):
     """
     Verify that the client sent a GET message then send a random quote
     to finally close the connection when the quote is fully sent.
     """
     if message[:len(GET_MSG)] == GET_MSG:
         quote = json.dumps(quotes[randint(0, len(quotes) - 1)])
-        if len(JSONP_FUNC_NAME) > 0:
-            quote = "%s(%s);" % (JSONP_FUNC_NAME, quote)
+        if padding:
+            quote = "%s(%s);" % (padding, quote)
 
         if not client.closed():
             client.write(_ok_request % (len(quote), quote), callback=client.close)
@@ -132,7 +131,7 @@ if __name__ == '__main__':
         quotes = json.loads(''.join(json_file.readlines()))
 
         sok = get_socket(DEFAULT_HOST, args.port, args.max_connections)
-        callback = functools.partial(connection_ready, sok)
+        callback = functools.partial(connection_ready, sok, padding=args.padding)
 
         io_loop = ioloop.IOLoop.instance()
         # Get socket and wait for connections

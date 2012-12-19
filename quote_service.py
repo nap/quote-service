@@ -138,11 +138,10 @@ if __name__ == '__main__':
         io_loop.add_handler(sok.fileno(), callback, io_loop.READ)
 
         try: # Launch the io loop.
-            print "Started ... "
             print "Serving %s quotes on port %s." % (len(quotes), args.port)
             print "Press Ctrl + C to quit. "
             io_loop.start()
 
         except KeyboardInterrupt:
             io_loop.stop()
-            print "\r\n/!\ Quote service has exited cleanly"
+            print " bye!"

@@ -5,7 +5,6 @@ import functools
 import socket
 import fcntl
 import errno
-import sys
 import argparse
 from os import O_NONBLOCK
 from tornado import ioloop, iostream, stack_context
@@ -91,6 +90,7 @@ def send_quote(client, message, padding=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+
     file_arg = {
         'dest': 'quote_file',
         'type': argparse.FileType('r'),
@@ -124,8 +124,8 @@ if __name__ == '__main__':
         'help': 'JSONP function name'
     }
     parser.add_argument('--padding', **padding_arg)
-    args = parser.parse_args()
 
+    args = parser.parse_args()
     with args.quote_file as json_file:
         # Load all the quotes in memory
         quotes = json.loads(''.join(json_file.readlines()))
@@ -137,8 +137,7 @@ if __name__ == '__main__':
         # Get socket and wait for connections
         io_loop.add_handler(sok.fileno(), callback, io_loop.READ)
 
-        # Launch the io loop.
-        try:
+        try: # Launch the io loop.
             print "Started ... "
             print "Serving %s quotes on port %s." % (len(quotes), args.port)
             print "Press Ctrl + C to quit. "

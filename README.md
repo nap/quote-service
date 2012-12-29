@@ -36,7 +36,6 @@ optional arguments:
   --padding PADDING   JSONP function name
 
 unary$ python quote_service.py -f quote.json
-Starting ... 
 Serving 17039 quotes on port 8080.
 Press Ctrl + C to quit. 
 ```

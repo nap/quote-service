@@ -1,5 +1,6 @@
 Quotes-Service
 ==============
+Bare minimum RESTful service implementation written with Tornado.
 
 Quote from various famous personalities. This project is entended to be a standalone service, on a dedicated port, written in Python. It require the Tornado library for it's async socket management. 
 Currently, the quote.json file contains over 17000 french language quote from various author encoded with HTMLEntities.
